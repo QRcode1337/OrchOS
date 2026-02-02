@@ -13,7 +13,7 @@ Orchestra OS is a high-fidelity dashboard console designed for managing, monitor
 
 **Key Modules:**
 *   **SQUAD_UNITS (Dashboard)**: Real-time agent status grid, throughput monitoring, and rapid deployment tools.
-*   **VOID-ANALYZER (Documentation)**: System specs, API references, and architectural blueprints.
+*   **CORTEX-ANALYZER (Documentation)**: System specs, API references, and architectural blueprints.
 *   **LOGIC-GATE (CLI)**: Direct terminal access for raw log streams and system overrides.
 
 ## // TECH_STACK

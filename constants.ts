@@ -3,7 +3,7 @@ import { Agent, LogEntry } from './types';
 export const INITIAL_LOGS: LogEntry[] = [
   { id: '1', timestamp: '14:22:01', level: 'INF', source: 'NEXUS-07', message: 'Chunk 482 processed successfully. Integrity hash verified.' },
   { id: '2', timestamp: '14:21:55', level: 'SYS', source: 'SYSTEM', message: 'Auto-scaling active. Spawned instance 12 on Node-B.' },
-  { id: '3', timestamp: '14:21:30', level: 'WRN', source: 'VOID-ANALYZER', message: 'State changed to IDLE. Data buffer underflow.' },
+  { id: '3', timestamp: '14:21:30', level: 'WRN', source: 'CORTEX-ANALYZER', message: 'State changed to IDLE. Data buffer underflow.' },
   { id: '4', timestamp: '14:20:12', level: 'FAT', source: 'LOGIC-GATE', message: 'FATAL_ERROR: Timed out after 30s. Connection reset by peer.' },
   { id: '5', timestamp: '14:19:59', level: 'SYS', source: 'WALLET', message: 'Token balance updated. -240 credits applied to account.' },
   { id: '6', timestamp: '14:18:45', level: 'INF', source: 'NEXUS-07', message: 'Starting analysis of batch #0912. 12 files queued.' },
@@ -23,8 +23,8 @@ export const AGENTS: Agent[] = [
     progress: 85,
   },
   {
-    id: 'void-analyzer',
-    name: 'VOID-ANALYZER',
+    id: 'cortex-analyzer',
+    name: 'CORTEX-ANALYZER',
     role: 'PATTERN_RECOGNITION',
     status: 'IDLE',
     version: 'v1.4.2_BETA',

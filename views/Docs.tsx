@@ -11,7 +11,7 @@ const Docs: React.FC<DocsProps> = ({ onBack }) => {
       <div className="max-w-4xl mx-auto">
         <header className="mb-12 border-b-2 border-li-ink-dark pb-6 flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-black uppercase tracking-tight">VOID ANALYZER</h1>
+            <h1 className="text-4xl font-black uppercase tracking-tight">CORTEX ANALYZER</h1>
             <p className="font-mono text-sm opacity-60 mt-2">SYSTEM DIAGNOSTICS & DOCUMENTATION // v4.2.0</p>
           </div>
           <button 

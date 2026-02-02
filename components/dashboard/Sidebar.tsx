@@ -14,7 +14,7 @@ interface SidebarProps {
  * Sidebar - Agent-themed navigation sidebar.
  *
  * Features:
- * - Three navigation items styled as agent cards (NEXUS-07, VOID-ANALYZER, LOGIC-GATE)
+ * - Three navigation items styled as agent cards (NEXUS-07, CORTEX-ANALYZER, LOGIC-GATE)
  * - Color-coded status bars for each nav item
  * - NEW_DEPLOYMENT button at bottom
  * - Responsive width (20px on mobile, 64px on desktop)
@@ -57,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onDeploy }
              </div>
           </button>
 
-          {/* Item 2: VOID-ANALYZER */}
+          {/* Item 2: CORTEX-ANALYZER */}
           <button 
             onClick={() => onViewChange('docs')}
             className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'docs' ? 'border-gb-yellow bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onDeploy }
                      <span className={`material-symbols-outlined ${currentView === 'docs' ? 'text-gb-bg0' : 'text-gb-gray'} text-2xl`}>grid_goldenratio</span>
                  </div>
                  <div className="flex-1 min-w-0">
-                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'docs' ? 'text-gb-fg' : 'text-gb-gray'}`}>VOID-ANALYZER</div>
+                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'docs' ? 'text-gb-fg' : 'text-gb-gray'}`}>CORTEX-ANALYZER</div>
                      <div className="flex gap-0.5 h-3 w-full mb-1 opacity-80">
                          <div className={`flex-1 ${currentView === 'docs' ? 'bg-gb-yellow' : 'bg-gb-gray/30'}`}></div>
                          <div className={`flex-1 ${currentView === 'docs' ? 'bg-gb-yellow' : 'bg-gb-gray/30'}`}></div>
