@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orchestra OS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Fira+Code:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              // Dashboard Palette (Gruvbox)
+              "gb-bg0": "#282828",
+              "gb-bg-h": "#1d2021",
+              "gb-red": "#fb4934",
+              "gb-green": "#b8bb26",
+              "gb-yellow": "#fabd2f",
+              "gb-blue": "#83a598",
+              "gb-purple": "#d3869b",
+              "gb-aqua": "#8ec07c",
+              "gb-orange": "#fe8019",
+              "gb-fg": "#ebdbb2",
+              "gb-gray": "#928374",
+              // CLI Palette
+              "bg0": "#282828",
+              "bg1": "#3c3836",
+              "bg2": "#504945",
+              "fg0": "#fbf1c7",
+              "fg1": "#ebdbb2",
+              // Landing Page Palette (Dark/Blueprint)
+              "lp-primary": "#e68019",
+              "lp-bg-dark": "#211911",
+              "lp-surface-dark": "#2c2219",
+              "lp-border-dark": "#473624",
+              // Landing Page Palette (Light/Infinite)
+              "li-primary": "#ec9c13",
+              "li-bg-light": "#f9f5d7",
+              "li-surface-light": "#ebdbb2",
+              "li-accent-red": "#cc241d",
+              "li-accent-green": "#98971a",
+              "li-accent-blue": "#458588",
+              "li-ink-dark": "#1d2021",
+            },
+            fontFamily: {
+              "display": ["'Chakra Petch'", "'Space Grotesk'", "sans-serif"],
+              "mono": ["'JetBrains Mono'", "monospace"],
+              "cli": ["'Fira Code'", "monospace"],
+              "body": ["'Noto Sans'", "sans-serif"],
+            },
+            borderWidth: {
+              '3': '3px',
+              '6': '6px',
+            },
+            animation: {
+              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            backgroundImage: {
+               'grid-pattern': "linear-gradient(to right, rgba(29, 32, 33, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(29, 32, 33, 0.05) 1px, transparent 1px)",
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      .retro-border {
+        box-shadow: 4px 4px 0px 0px #1d2021;
+      }
+      .pixel-art {
+        image-rendering: pixelated;
+      }
+      .scanline {
+        width: 100%;
+        height: 100px;
+        z-index: 10;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+        opacity: 0.1;
+        position: absolute;
+        pointer-events: none;
+        animation: scanline 10s linear infinite;
+      }
+      @keyframes scanline {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(100vh); }
+      }
+      /* Custom Scrollbar for CLI */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #282828;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #504945;
+        border: 1px solid #3c3836;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #928374;
+      }
+      
+      /* Landing Page Specifics */
+      .blueprint-grid {
+          background-image: 
+              linear-gradient(rgba(101, 77, 52, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(101, 77, 52, 0.1) 1px, transparent 1px);
+          background-size: 40px 40px;
+      }
+      .node {
+          transition: all 0.3s ease;
+          cursor: crosshair;
+      }
+      .node:hover {
+          fill: #e68019;
+          filter: drop-shadow(0 0 8px rgba(230, 128, 25, 0.6));
+          r: 8;
+      }
+      .hard-shadow {
+          box-shadow: 6px 6px 0px 0px rgba(29, 32, 33, 1);
+      }
+      .perspective-1000 {
+          perspective: 1000px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gb-bg-h text-gb-fg">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

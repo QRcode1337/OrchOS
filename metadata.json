@@ -1,0 +1,5 @@
+{
+  "name": "Orchestra OS",
+  "description": "A retro-futuristic AI Agent Orchestration Dashboard featuring a graphical interface and a CLI terminal view with real-time telemetry.",
+  "requestFramePermissions": []
+}
