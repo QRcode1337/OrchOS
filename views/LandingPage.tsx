@@ -62,6 +62,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onViewDocs, onViewT
                   <span className="material-symbols-outlined text-li-bg-light" style={{fontSize: '20px'}}>deployed_code</span>
                 </div>
                 <span className="text-lg font-bold tracking-wider">ORCHESTRA OS</span>
+                <span className="px-2 py-0.5 bg-purple-100 border border-purple-500 text-purple-600 text-[9px] font-bold uppercase tracking-[0.15em] font-mono animate-pulse">PROTOTYPE</span>
               </div>
               <div className="hidden md:flex items-center gap-8 text-sm font-bold tracking-wide">
                 <button onClick={onViewDocs} className="hover:text-li-primary transition-colors">DOCS</button>
@@ -237,6 +238,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onViewDocs, onViewT
                       <span className="material-symbols-outlined text-xl">hub</span>
                    </div>
                    <span className="font-bold text-lg tracking-tighter uppercase text-white">Orchestra<span className="text-lp-primary">OS</span></span>
+                   <span className="px-2 py-0.5 bg-gb-purple/20 border border-gb-purple text-gb-purple text-[9px] font-bold uppercase tracking-[0.15em] font-mono animate-pulse">PROTOTYPE</span>
                 </div>
                 <nav className="hidden md:flex items-center gap-10">
                    <button onClick={() => setShowInfoModal('features')} className="text-sm font-medium text-gray-400 hover:text-lp-primary transition-colors relative group">// FEATURES</button>

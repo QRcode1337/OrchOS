@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Agent } from '../../types';
+import Spinner from '../shared/Spinner';
 
 interface AgentCardProps {
   /** Agent data to display */
@@ -7,7 +8,7 @@ interface AgentCardProps {
   /** Callback when card body is clicked (opens detail modal) */
   onClick?: () => void;
   /** Callback for status control buttons (play/pause/terminate) */
-  onUpdateStatus?: (id: string, status: Agent['status']) => void;
+  onUpdateStatus?: (id: string, status: Agent['status']) => void | Promise<void>;
 }
 
 /**
@@ -22,6 +23,17 @@ interface AgentCardProps {
  * Wrapped with React.memo to prevent unnecessary re-renders.
  */
 const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick, onUpdateStatus }) => {
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+
+  const handleStatusUpdate = async (id: string, status: Agent['status']) => {
+    setUpdatingStatus(status);
+    try {
+      await onUpdateStatus?.(id, status);
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
   const colorClasses = {
     blue: 'gb-blue',
     yellow: 'gb-yellow',
@@ -78,28 +90,31 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick, onUpdateStatus })
             <span className="text-[9px] font-bold text-gb-gray tracking-widest uppercase truncate max-w-[100px]">{agent.version}</span>
             <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                  {agent.status !== 'RUNNING' ? (
-                     <button 
-                        onClick={() => onUpdateStatus?.(agent.id, 'RUNNING')}
-                        className="w-8 h-8 bg-gb-bg0 flex items-center justify-center hover:bg-gb-green hover:text-gb-bg-h transition-colors border border-gb-gray/20"
+                     <button
+                        onClick={() => handleStatusUpdate(agent.id, 'RUNNING')}
+                        disabled={!!updatingStatus}
+                        className="w-8 h-8 bg-gb-bg0 flex items-center justify-center hover:bg-gb-green hover:text-gb-bg-h transition-colors border border-gb-gray/20 disabled:opacity-40"
                         title="Resume Agent Task"
                      >
-                        <span className="material-symbols-outlined text-sm">play_arrow</span>
+                        {updatingStatus === 'RUNNING' ? <Spinner size="sm" /> : <span className="material-symbols-outlined text-sm">play_arrow</span>}
                      </button>
                  ) : (
-                    <button 
-                        onClick={() => onUpdateStatus?.(agent.id, 'IDLE')}
-                        className="w-8 h-8 bg-gb-bg0 flex items-center justify-center hover:bg-gb-yellow hover:text-gb-bg-h transition-colors border border-gb-gray/20"
+                    <button
+                        onClick={() => handleStatusUpdate(agent.id, 'IDLE')}
+                        disabled={!!updatingStatus}
+                        className="w-8 h-8 bg-gb-bg0 flex items-center justify-center hover:bg-gb-yellow hover:text-gb-bg-h transition-colors border border-gb-gray/20 disabled:opacity-40"
                         title="Pause Agent Execution"
                     >
-                        <span className="material-symbols-outlined text-sm">pause</span>
+                        {updatingStatus === 'IDLE' ? <Spinner size="sm" /> : <span className="material-symbols-outlined text-sm">pause</span>}
                     </button>
                  )}
-                 <button 
-                    onClick={() => onUpdateStatus?.(agent.id, 'OFFLINE')}
-                    className="w-8 h-8 bg-gb-bg0 flex items-center justify-center hover:bg-gb-red hover:text-gb-bg-h transition-colors border border-gb-gray/20"
+                 <button
+                    onClick={() => handleStatusUpdate(agent.id, 'OFFLINE')}
+                    disabled={!!updatingStatus}
+                    className="w-8 h-8 bg-gb-bg0 flex items-center justify-center hover:bg-gb-red hover:text-gb-bg-h transition-colors border border-gb-gray/20 disabled:opacity-40"
                     title="Terminate Process"
                  >
-                    <span className="material-symbols-outlined text-sm">close</span>
+                    {updatingStatus === 'OFFLINE' ? <Spinner size="sm" /> : <span className="material-symbols-outlined text-sm">close</span>}
                  </button>
             </div>
         </div>

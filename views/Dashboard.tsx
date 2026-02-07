@@ -25,9 +25,10 @@ interface DashboardProps {
   agents: Agent[];
   onAddAgent: (agent: Agent) => void;
   onUpdateAgentStatus: (id: string, status: Agent['status']) => void;
+  isLoading?: boolean;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, agents, onAddAgent, onUpdateAgentStatus }) => {
+const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, agents, onAddAgent, onUpdateAgentStatus, isLoading }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -67,7 +68,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, 
         
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 border-b-4 border-gb-bg0 pb-6">
           <div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter text-gb-fg mb-1">AGENT_DIAGNOSTIC_V2</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter text-gb-fg mb-1">AGENT_DIAGNOSTIC_V2</h2>
+              <span className="px-3 py-1 bg-gb-purple/20 border-2 border-gb-purple text-gb-purple text-[10px] font-bold uppercase tracking-[0.2em] font-mono animate-pulse shrink-0">PROTOTYPE</span>
+            </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-gb-green animate-pulse"></span>
               <p className="text-gb-gray font-bold uppercase text-[10px] tracking-[0.2em]">Amsterdam DC // Node_042 // Link: Established</p>
@@ -160,16 +164,42 @@ const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, 
               ORCHESTRATE
             </button>
           </div>
-          {filteredAgents.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="border-3 border-gb-bg0 bg-gb-bg0/20 animate-pulse">
+                  <div className="h-10 bg-gb-bg0" />
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 bg-gb-bg0 border-2 border-gb-gray/20" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3 bg-gb-bg0 w-24" />
+                        <div className="h-5 bg-gb-bg0 w-32" />
+                        <div className="h-2 bg-gb-bg0 w-full" />
+                      </div>
+                    </div>
+                    <div className="h-12 bg-gb-bg0/50 border-l-2 border-gb-gray/20" />
+                    <div className="flex justify-between border-t-2 border-gb-bg0 pt-4">
+                      <div className="h-3 bg-gb-bg0 w-16" />
+                      <div className="flex gap-2">
+                        <div className="w-8 h-8 bg-gb-bg0" />
+                        <div className="w-8 h-8 bg-gb-bg0" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredAgents.length === 0 ? (
             <div className="p-8 text-center border-2 border-gb-bg0 border-dashed text-gb-gray font-mono">
                NO UNITS FOUND MATCHING QUERY "{searchQuery}"
             </div>
           ) : (
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
                 {filteredAgents.map(agent => (
-                    <AgentCard 
-                        key={agent.id} 
-                        agent={agent} 
+                    <AgentCard
+                        key={agent.id}
+                        agent={agent}
                         onClick={() => setSelectedAgent(agent)}
                         onUpdateStatus={onUpdateAgentStatus}
                     />

@@ -11,6 +11,7 @@ import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import LandingPage from './views/LandingPage';
 import { ViewMode, LogEntry, Agent } from './types';
 import { INITIAL_LOGS, AGENTS as INITIAL_AGENTS } from './constants';
+import { useToast } from './components/shared/Toast';
 
 /** Lazy load non-initial views for code splitting (62% bundle reduction) */
 const Dashboard = lazy(() => import('./views/Dashboard'));
@@ -31,9 +32,11 @@ const LoadingFallback: React.FC = () => (
 );
 
 const App: React.FC = () => {
+  const { addToast } = useToast();
   const [currentView, setCurrentView] = useState<ViewMode>('landing');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   // Fetch initial data
   useEffect(() => {
@@ -43,18 +46,20 @@ const App: React.FC = () => {
           fetch('/api/agents'),
           fetch('/api/logs')
         ]);
-        
+
         if (agentsRes.ok) {
           const agentsData = await agentsRes.json();
           setAgents(agentsData);
         }
-        
+
         if (logsRes.ok) {
           const logsData = await logsRes.json();
           setLogs(logsData);
         }
-      } catch (error) {
-        console.error('Failed to fetch initial data:', error);
+      } catch {
+        addToast('warning', 'Failed to load initial data. Using offline mode.');
+      } finally {
+        setIsLoadingData(false);
       }
     };
 
@@ -84,7 +89,7 @@ const App: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level, source, message })
-    }).catch(err => console.error('Failed to persist log:', err));
+    }).catch(() => { /* Log persistence is non-critical, fire-and-forget */ });
   }, []);
 
   /**
@@ -110,11 +115,11 @@ const App: React.FC = () => {
             addLog('INF', agent.name, 'Initialization sequence complete. Status: RUNNING');
         }, 1500);
 
-    } catch (error) {
-        console.error('Failed to create agent:', error);
-        // Revert optimistic update if needed?
+    } catch {
+        addToast('error', `Failed to deploy agent "${agent.name}". Reverting.`);
+        setAgents(prev => prev.filter(a => a.id !== agent.id));
     }
-  }, [addLog]);
+  }, [addLog, addToast]);
 
   /**
    * Update an agent's status with optimistic UI update.
@@ -123,9 +128,11 @@ const App: React.FC = () => {
    * @param status - New status (RUNNING, IDLE, ERROR, OFFLINE)
    */
   const updateAgentStatus = useCallback(async (id: string, status: Agent['status']) => {
-    // Optimistic update
+    // Capture previous status for rollback
+    let previousStatus: Agent['status'] | undefined;
     setAgents(prev => prev.map(agent => {
       if (agent.id === id) {
+        previousStatus = agent.status;
         return { ...agent, status };
       }
       return agent;
@@ -138,10 +145,13 @@ const App: React.FC = () => {
             body: JSON.stringify({ status })
         });
         addLog('SYS', 'ORCHESTRATOR', `Agent ${id} status update: ${status}`);
-    } catch (error) {
-        console.error('Failed to update agent status:', error);
+    } catch {
+        addToast('error', `Failed to update agent ${id} status. Reverting.`);
+        if (previousStatus) {
+          setAgents(prev => prev.map(a => a.id === id ? { ...a, status: previousStatus! } : a));
+        }
     }
-  }, [addLog]);
+  }, [addLog, addToast]);
 
   /**
    * Handle sending a message to an agent.
@@ -297,6 +307,7 @@ const App: React.FC = () => {
             agents={agents}
             onAddAgent={handleAddAgent}
             onUpdateAgentStatus={updateAgentStatus}
+            isLoading={isLoadingData}
         />
       </div>
     </Suspense>

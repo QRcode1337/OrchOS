@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Agent, AgentColor } from '../../types';
 import Modal from '../shared/Modal';
+import Spinner from '../shared/Spinner';
 import AgentCard from './AgentCard';
 import { AGENT_TEMPLATES } from '../../constants';
 
 interface CreateAgentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (agent: Agent) => void;
+  onCreate: (agent: Agent) => void | Promise<void>;
 }
 
 const COLORS: AgentColor[] = ['blue', 'yellow', 'red', 'green', 'purple', 'aqua', 'orange'];
@@ -21,9 +22,11 @@ const CreateAgentModal: React.FC<CreateAgentModalProps> = ({ isOpen, onClose, on
     color: 'green' as AgentColor,
     message: 'Initializing primary directives...'
   });
+  const [isDeploying, setIsDeploying] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsDeploying(true);
     const newAgent: Agent = {
       id: `agent-${Date.now()}`,
       status: 'IDLE',
@@ -32,10 +35,13 @@ const CreateAgentModal: React.FC<CreateAgentModalProps> = ({ isOpen, onClose, on
       ...formData,
       imageUrl: formData.imageUrl || DEFAULT_IMAGE
     };
-    onCreate(newAgent);
-    onClose();
-    // Reset form slightly
-    setFormData(prev => ({ ...prev, name: `NEW_AGENT_${Math.floor(Math.random() * 99)}` }));
+    try {
+      await onCreate(newAgent);
+    } finally {
+      setIsDeploying(false);
+      onClose();
+      setFormData(prev => ({ ...prev, name: `NEW_AGENT_${Math.floor(Math.random() * 99)}` }));
+    }
   };
 
   const applyTemplate = (template: typeof AGENT_TEMPLATES[number]) => {
@@ -135,11 +141,19 @@ const CreateAgentModal: React.FC<CreateAgentModalProps> = ({ isOpen, onClose, on
                 </div>
             </div>
 
-            <button 
+            <button
                 type="submit"
-                className="mt-4 bg-gb-aqua text-gb-bg-h font-display font-bold uppercase py-4 border-b-4 border-r-4 border-gb-bg-h active:border-0 active:translate-y-1 active:translate-x-1 transition-all hover:brightness-110"
+                disabled={isDeploying}
+                className="mt-4 bg-gb-aqua text-gb-bg-h font-display font-bold uppercase py-4 border-b-4 border-r-4 border-gb-bg-h active:border-0 active:translate-y-1 active:translate-x-1 transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
-                Deploy Unit
+                {isDeploying ? (
+                  <>
+                    <Spinner size="sm" />
+                    <span>Deploying...</span>
+                  </>
+                ) : (
+                  'Deploy Unit'
+                )}
             </button>
             </form>
 
