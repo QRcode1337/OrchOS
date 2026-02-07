@@ -26,6 +26,7 @@ const NeuralMap: React.FC<NeuralMapProps> = ({ agents, memories, convergence }) 
     const [nodes, setNodes] = useState<Node[]>([]);
     const [links, setLinks] = useState<Link[]>([]);
     const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         // Build graph data
@@ -72,10 +73,10 @@ const NeuralMap: React.FC<NeuralMapProps> = ({ agents, memories, convergence }) 
 
         // Force simulation
         const simulation = d3.forceSimulation<Node>(nodes)
-            .force('link', d3.forceLink<Node, Link>(links).id(d => d.id).distance(50))
-            .force('charge', d3.forceManyBody().strength(-150))
+            .force('link', d3.forceLink<Node, Link>(links).id(d => d.id).distance(100))
+            .force('charge', d3.forceManyBody().strength(-300))
             .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('collision', d3.forceCollide().radius(20));
+            .force('collision', d3.forceCollide().radius(30));
 
         // Adjust link strength based on convergence to pull things together
         const linkForce = simulation.force('link') as d3.ForceLink<Node, Link>;
@@ -85,31 +86,69 @@ const NeuralMap: React.FC<NeuralMapProps> = ({ agents, memories, convergence }) 
             setNodes([...simulation.nodes()]);
         });
 
+        // Mouse Parallax
+        const handleMouseMove = (e: MouseEvent) => {
+            const rect = svgRef.current?.getBoundingClientRect();
+            if (rect) {
+                setMousePos({
+                    x: (e.clientX - rect.left - width / 2) / 40,
+                    y: (e.clientY - rect.top - height / 2) / 40
+                });
+            }
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+
         return () => {
             simulation.stop();
+            window.removeEventListener('mousemove', handleMouseMove);
         };
     }, [nodes.length, links.length, convergence]);
 
     return (
         <div className="relative w-full h-full overflow-hidden">
-            <svg ref={svgRef} className="w-full h-full">
-                <g>
+            <svg ref={svgRef} className="w-full h-full drop-shadow-2xl">
+                <defs>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                    
+                    <linearGradient id="linkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="currentColor" stopOpacity="0.2" />
+                        <stop offset="50%" stopColor="currentColor" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="currentColor" stopOpacity="0.2" />
+                    </linearGradient>
+                </defs>
+
+                <g transform={`translate(${mousePos.x}, ${mousePos.y})`}>
                     {links.map((link, i) => {
                         const sourceNode = nodes.find(n => n.id === (link.source as any).id || n.id === link.source);
                         const targetNode = nodes.find(n => n.id === (link.target as any).id || n.id === link.target);
                         if (!sourceNode || !targetNode) return null;
                         
                         return (
-                            <line
-                                key={i}
-                                x1={sourceNode.x}
-                                y1={sourceNode.y}
-                                x2={targetNode.x}
-                                y2={targetNode.y}
-                                stroke="#aeadaf"
-                                strokeOpacity={0.2}
-                                strokeWidth={1}
-                            />
+                            <g key={`link-group-${i}`}>
+                                <line
+                                    x1={sourceNode.x}
+                                    y1={sourceNode.y}
+                                    x2={targetNode.x}
+                                    y2={targetNode.y}
+                                    stroke="#aeadaf"
+                                    strokeOpacity={0.1}
+                                    strokeWidth={1}
+                                />
+                                {/* Pulsing data particle */}
+                                <circle r="2" fill="#8ec07c" filter="url(#glow)">
+                                    <animateMotion
+                                        dur={`${2 + Math.random() * 3}s`}
+                                        repeatCount="indefinite"
+                                        path={`M ${sourceNode.x},${sourceNode.y} L ${targetNode.x},${targetNode.y}`}
+                                    />
+                                </circle>
+                            </g>
                         );
                     })}
                     {nodes.map((node) => (
@@ -118,21 +157,35 @@ const NeuralMap: React.FC<NeuralMapProps> = ({ agents, memories, convergence }) 
                             transform={`translate(${node.x},${node.y})`}
                             onMouseEnter={() => setHoveredNode(node)}
                             onMouseLeave={() => setHoveredNode(null)}
-                            className="cursor-pointer transition-transform hover:scale-125"
+                            className="cursor-pointer transition-all duration-300"
                         >
                             <circle
-                                r={node.type === 'AGENT' ? 8 : 4}
+                                r={node.type === 'AGENT' ? 10 : 5}
                                 fill={node.color}
+                                filter="url(#glow)"
                                 className={node.type === 'AGENT' ? 'animate-pulse' : ''}
+                                style={{
+                                    boxShadow: `0 0 15px ${node.color}`
+                                }}
                             />
                             {node.type === 'AGENT' && (
-                                <text
-                                    dy="-12"
-                                    textAnchor="middle"
-                                    className="text-[10px] fill-gb-fg font-bold uppercase pointer-events-none"
-                                >
-                                    {node.name}
-                                </text>
+                                <g>
+                                    <circle
+                                        r={14}
+                                        fill="none"
+                                        stroke={node.color}
+                                        strokeWidth="1"
+                                        strokeDasharray="4 4"
+                                        className="animate-spin-slow opacity-40"
+                                    />
+                                    <text
+                                        dy="-18"
+                                        textAnchor="middle"
+                                        className="text-[10px] fill-gb-fg font-bold uppercase pointer-events-none tracking-widest"
+                                    >
+                                        {node.name}
+                                    </text>
+                                </g>
                             )}
                         </g>
                     ))}

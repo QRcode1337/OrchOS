@@ -4,10 +4,29 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "setup": "pnpm install && pnpm prisma generate && pnpm prisma migrate dev",
     "dev": "concurrently \"vite\" \"tsx server/index.ts\"",
     "build": "vite build",
     "preview": "vite preview",
-    "start:server": "tsx server/index.ts"
+    "start:server": "tsx server/index.ts",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "jj:setup": "node scripts/setup-agentic-jujutsu.js",
+    "jj:setup-manual": "node scripts/setup-agentic-jujutsu-manual.js",
+    "jj:start": "node scripts/track-development.js start",
+    "jj:complete": "node scripts/track-development.js complete",
+    "jj:status": "node scripts/track-development.js status",
+    "jj:suggest": "node scripts/jj-helper.js suggest",
+    "jj:stats": "node scripts/jj-helper.js stats",
+    "jj:patterns": "node scripts/jj-helper.js patterns"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.3.0",
@@ -16,25 +35,40 @@
     "d3-force": "^3.0.0",
     "d3-selection": "^3.0.0",
     "d3-timer": "^3.0.1",
+    "dotenv": "^16.4.5",
     "express": "^5.2.1",
+    "express-rate-limit": "^7.5.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "recharts": "^3.7.0"
+    "recharts": "^3.7.0",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@prisma/client": "^7.3.0",
     "@prisma/config": "^7.3.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.19",
     "@types/d3-force": "^3.0.10",
     "@types/d3-timer": "^3.0.2",
     "@types/express": "^5.0.6",
     "@types/node": "^22.19.7",
+    "@types/supertest": "^6.0.2",
     "@vitejs/plugin-react": "^5.0.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/ui": "^2.1.8",
+    "agentic-jujutsu": "^2.3.6",
     "concurrently": "^9.2.1",
+    "happy-dom": "^20.5.0",
+    "jsdom": "^25.0.1",
+    "msw": "^2.7.0",
     "prisma": "^7.3.0",
+    "supertest": "^7.0.0",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "^2.1.8"
   }
 }

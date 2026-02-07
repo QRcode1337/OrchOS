@@ -16,6 +16,10 @@ import { INITIAL_LOGS, AGENTS as INITIAL_AGENTS } from './constants';
 const Dashboard = lazy(() => import('./views/Dashboard'));
 const AgentSandbox = lazy(() => import('./views/AgentSandbox'));
 const AgentSynthesis = lazy(() => import('./views/AgentSynthesis'));
+const CortexDevConsole = lazy(() => import('./views/CortexDevConsole'));
+const AgentSnapshotGallery = lazy(() => import('./views/AgentSnapshotGallery'));
+const AgentOrchestrator = lazy(() => import('./views/AgentOrchestrator'));
+const Docs = lazy(() => import('./views/Docs'));
 
 /** Loading fallback shown during lazy chunk loading */
 const LoadingFallback: React.FC = () => (
@@ -139,6 +143,19 @@ const App: React.FC = () => {
     }
   }, [addLog]);
 
+  /**
+   * Handle sending a message to an agent.
+   * Simulates a response for now.
+   */
+  const handleSendMessage = useCallback((agentId: string, msg: string) => {
+    const agent = agents.find(a => a.id === agentId);
+    addLog('USR', agent?.name || 'USER', `>> ${msg}`);
+    // Simulate agent response log
+    setTimeout(() => {
+        addLog('INF', agent?.name || 'AGENT', `Processing: ${msg.substring(0, 50)}...`);
+    }, 1500);
+  }, [agents, addLog]);
+
   // Simulate incoming logs - only runs when dashboard or CLI is visible
   useEffect(() => {
     // Skip interval if not on a view that shows logs
@@ -202,8 +219,17 @@ const App: React.FC = () => {
     );
   }
 
-  // Map 'docs' view to AgentSynthesis
+  // Map 'docs' view to Docs (System Manual)
   if (currentView === 'docs') {
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        <Docs onBack={() => setCurrentView('landing')} />
+      </Suspense>
+    );
+  }
+
+  // Map 'synthesis' view to AgentSynthesis (Visualizer)
+  if (currentView === 'synthesis') {
     return (
       <Suspense fallback={<LoadingFallback />}>
         <AgentSynthesis onBack={() => setCurrentView('dashboard')} />
@@ -218,6 +244,44 @@ const App: React.FC = () => {
           <AgentSandbox 
               logs={logs} 
               onDeploy={() => setCurrentView('dashboard')} 
+          />
+        </Suspense>
+      );
+  }
+
+  // Map 'cortex' view to CortexDevConsole
+  if (currentView === 'cortex') {
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <CortexDevConsole
+              logs={logs}
+              agents={agents}
+              onBack={() => setCurrentView('dashboard')}
+              onSendMessage={handleSendMessage}
+          />
+        </Suspense>
+      );
+  }
+
+  // Map 'snapshots' view to AgentSnapshotGallery
+  if (currentView === 'snapshots') {
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <AgentSnapshotGallery
+              onBack={() => setCurrentView('dashboard')}
+          />
+        </Suspense>
+      );
+  }
+
+  // Map 'orchestrator' view to AgentOrchestrator
+  if (currentView === 'orchestrator') {
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <AgentOrchestrator
+              onBack={() => setCurrentView('dashboard')}
+              logs={logs}
+              onSendMessage={handleSendMessage}
           />
         </Suspense>
       );

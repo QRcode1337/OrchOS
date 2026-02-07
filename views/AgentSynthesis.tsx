@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Agent, LogEntry } from '../types';
+import { Agent } from '../types';
 import NeuralMap from '../components/synthesis/NeuralMap';
 
 interface AgentSynthesisProps {
@@ -9,6 +9,9 @@ interface AgentSynthesisProps {
 const AgentSynthesis: React.FC<AgentSynthesisProps> = ({ onBack }) => {
     const [memories, setMemories] = useState<any[]>([]);
     const [agents, setAgents] = useState<Agent[]>([]);
+    const [showFreqControls, setShowFreqControls] = useState(false);
+    const [synthFrequency, setSynthFrequency] = useState(60);
+    const [refreshRate, setRefreshRate] = useState(5);
     const TARGET_MEMORIES = 20;
     const progress = memories.length > 0 ? Math.min(100, Math.round((memories.length / TARGET_MEMORIES) * 100)) : 0;
 
@@ -71,6 +74,11 @@ const AgentSynthesis: React.FC<AgentSynthesisProps> = ({ onBack }) => {
                          backgroundSize: '30px 30px' 
                      }} 
                 />
+                
+                {/* CRT Noise Overlay */}
+                <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] overflow-hidden">
+                    <div className="absolute inset-[-200%] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] animate-grain" />
+                </div>
 
                 {/* Left Panel: Artifact Stats */}
                 <div className="w-80 border-r border-gb-gray/20 p-6 flex flex-col gap-8 z-10 bg-gb-bg0/50 backdrop-blur-sm">
@@ -157,12 +165,14 @@ const AgentSynthesis: React.FC<AgentSynthesisProps> = ({ onBack }) => {
 
                      {/* Actions */}
                      <div className="p-6 border-t border-gb-gray/20 space-y-3">
-                         <button 
+                         <button
                             onClick={onBack}
                             className="w-full py-4 border border-gb-red text-gb-red bg-gb-red/5 font-bold uppercase tracking-widest text-xs hover:bg-gb-red hover:text-gb-bg0 transition-all">
                              ABORT_SYNTHESIS
                          </button>
-                         <button className="w-full py-4 border border-gb-gray/30 text-gb-gray bg-gb-gray/5 font-bold uppercase tracking-widest text-xs hover:border-gb-fg hover:text-gb-fg transition-all">
+                         <button
+                            onClick={() => setShowFreqControls(true)}
+                            className="w-full py-4 border border-gb-aqua/30 text-gb-aqua bg-gb-aqua/5 font-bold uppercase tracking-widest text-xs hover:border-gb-aqua hover:bg-gb-aqua hover:text-gb-bg0 transition-all">
                              ADJUST_FREQ
                          </button>
                      </div>
@@ -185,8 +195,139 @@ const AgentSynthesis: React.FC<AgentSynthesisProps> = ({ onBack }) => {
                      KERNEL: SYNTH_OS_V8.9.1 // 2024-SYS-TERM
                  </div>
             </div>
+
+            {/* Frequency Controls Modal */}
+            {showFreqControls && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setShowFreqControls(false)}>
+                    <div className="bg-gb-bg0 border-4 border-gb-aqua max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+                        <div className="bg-gb-aqua p-4 flex items-center justify-between">
+                            <h2 className="text-xl font-display font-bold uppercase text-gb-bg0">SYNTHESIS FREQUENCY CONTROLS</h2>
+                            <button onClick={() => setShowFreqControls(false)} className="text-gb-bg0 hover:text-gb-red">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-xs font-bold text-gb-gray uppercase tracking-wider mb-2 block">
+                                        Synthesis Frequency (Hz)
+                                    </label>
+                                    <input
+                                        type="range"
+                                        min="10"
+                                        max="120"
+                                        value={synthFrequency}
+                                        onChange={(e) => setSynthFrequency(Number(e.target.value))}
+                                        className="w-full h-2 bg-gb-bg-h rounded-none appearance-none cursor-pointer"
+                                        style={{
+                                            background: `linear-gradient(to right, var(--color-gb-aqua) 0%, var(--color-gb-aqua) ${(synthFrequency / 120) * 100}%, var(--color-gb-bg-h) ${(synthFrequency / 120) * 100}%, var(--color-gb-bg-h) 100%)`
+                                        }}
+                                    />
+                                    <div className="flex justify-between text-[10px] text-gb-gray mt-2">
+                                        <span>LOW (10Hz)</span>
+                                        <span className="text-gb-aqua font-bold">{synthFrequency}Hz</span>
+                                        <span>HIGH (120Hz)</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-bold text-gb-gray uppercase tracking-wider mb-2 block">
+                                        Refresh Rate (seconds)
+                                    </label>
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="30"
+                                        value={refreshRate}
+                                        onChange={(e) => setRefreshRate(Number(e.target.value))}
+                                        className="w-full h-2 bg-gb-bg-h rounded-none appearance-none cursor-pointer"
+                                        style={{
+                                            background: `linear-gradient(to right, var(--color-gb-aqua) 0%, var(--color-gb-aqua) ${(refreshRate / 30) * 100}%, var(--color-gb-bg-h) ${(refreshRate / 30) * 100}%, var(--color-gb-bg-h) 100%)`
+                                        }}
+                                    />
+                                    <div className="flex justify-between text-[10px] text-gb-gray mt-2">
+                                        <span>FAST (1s)</span>
+                                        <span className="text-gb-aqua font-bold">{refreshRate}s</span>
+                                        <span>SLOW (30s)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gb-aqua/10 border border-gb-aqua/30 p-4">
+                                <div className="text-xs font-mono text-gb-fg space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-gb-gray">Current Frequency:</span>
+                                        <span className="text-gb-aqua font-bold">{synthFrequency}Hz</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gb-gray">Refresh Interval:</span>
+                                        <span className="text-gb-aqua font-bold">{refreshRate}s</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gb-gray">Processing Power:</span>
+                                        <span className="text-gb-aqua font-bold">{Math.round((synthFrequency / 120) * 100)}%</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gb-gray">Memory Usage:</span>
+                                        <span className="text-gb-aqua font-bold">{Math.round((synthFrequency * refreshRate) / 10)}MB</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={() => {
+                                        alert(`Synthesis parameters updated:\n\nFrequency: ${synthFrequency}Hz\nRefresh Rate: ${refreshRate}s\n\nNeural synthesis engine recalibrated.`);
+                                        setShowFreqControls(false);
+                                    }}
+                                    className="flex-1 bg-gb-aqua text-gb-bg0 py-3 font-bold uppercase hover:bg-gb-aqua/80 transition-colors"
+                                >
+                                    Apply Settings
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setSynthFrequency(60);
+                                        setRefreshRate(5);
+                                    }}
+                                    className="flex-1 bg-gb-bg-h border border-gb-gray/30 text-gb-fg py-3 font-bold uppercase hover:border-gb-gray transition-colors"
+                                >
+                                    Reset to Default
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+
+// Global styles for animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes grain {
+        0%, 100% { transform: translate(0, 0); }
+        10% { transform: translate(-5%, -5%); }
+        20% { transform: translate(-10%, 5%); }
+        30% { transform: translate(5%, -10%); }
+        40% { transform: translate(-5%, 15%); }
+        50% { transform: translate(-10%, 5%); }
+        60% { transform: translate(15%, 0); }
+        70% { transform: translate(0, 10%); }
+        80% { transform: translate(-15%, 0); }
+        90% { transform: translate(10%, 5%); }
+    }
+    .animate-grain {
+        animation: grain 8s steps(10) infinite;
+    }
+    .animate-spin-slow {
+        animation: spin 8s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);
 
 export default AgentSynthesis;

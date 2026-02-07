@@ -1,0 +1,11 @@
+packages:
+  - .
+
+ignoredBuiltDependencies:
+  - better-sqlite3
+  - esbuild
+  - msw
+  - prisma
+
+onlyBuiltDependencies:
+  - '@prisma/engines'

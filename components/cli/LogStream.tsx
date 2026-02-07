@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { LogEntry } from '../../types';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
@@ -16,12 +16,24 @@ const LogStream: React.FC<LogStreamProps> = ({
   onCommandSubmit 
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [chartData, setChartData] = useState(Array(20).fill(0).map(() => ({ v: 20 + Math.random() * 30 })));
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [logs]);
+
+  // Animate the small throughput chart
+  useEffect(() => {
+      const interval = setInterval(() => {
+          setChartData(prev => {
+              const newVal = 30 + Math.random() * 60;
+              return [...prev.slice(1), { v: newVal }];
+          });
+      }, 1000);
+      return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="flex-1 flex flex-col border-r border-bg2 bg-bg0">
@@ -86,10 +98,8 @@ const LogStream: React.FC<LogStreamProps> = ({
         </div>
         <div className="h-20 w-full relative">
             <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={[
-                {v: 20}, {v: 40}, {v: 30}, {v: 70}, {v: 40}, {v: 60}, {v: 30}, {v: 80}, {v: 50}, {v: 90}
-            ]}>
-                <Area type="monotone" dataKey="v" stroke="#83a598" fill="#83a598" fillOpacity={0.2} strokeWidth={2} />
+            <AreaChart data={chartData}>
+                <Area type="monotone" dataKey="v" stroke="#83a598" fill="#83a598" fillOpacity={0.2} strokeWidth={2} isAnimationActive={false} />
             </AreaChart>
             </ResponsiveContainer>
         </div>

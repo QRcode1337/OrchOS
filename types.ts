@@ -64,4 +64,24 @@ export interface MemoryEntry {
  * Application view modes for routing.
  * Controls which view component is rendered.
  */
-export type ViewMode = 'landing' | 'dashboard' | 'cli' | 'docs' | 'synthesis';
+export type ViewMode = 'landing' | 'dashboard' | 'cli' | 'docs' | 'synthesis' | 'cortex' | 'snapshots' | 'orchestrator';
+
+/**
+ * Represents a chat message in the agent communication system.
+ */
+export interface ChatMessage {
+  /** Unique identifier for the message */
+  id: string;
+  /** ID of the agent this message is associated with */
+  agentId: string;
+  /** Agent name for display */
+  agentName: string;
+  /** Message sender type */
+  sender: 'user' | 'agent';
+  /** Message content */
+  content: string;
+  /** Message timestamp */
+  timestamp: string;
+  /** Agent color for styling */
+  color?: AgentColor;
+}

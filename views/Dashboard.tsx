@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Sidebar from '../components/dashboard/Sidebar';
 import RightSidebar from '../components/dashboard/RightSidebar';
 import StatCard from '../components/dashboard/StatCard';
@@ -8,6 +8,15 @@ import CreateAgentModal from '../components/dashboard/CreateAgentModal';
 import AgentDetailModal from '../components/dashboard/AgentDetailModal';
 import { PROFILE_IMAGE } from '../constants';
 import { ViewMode, LogEntry, Agent } from '../types';
+
+// Extracted to module level to prevent re-creation on each render
+const GRID_BACKGROUND_STYLE = {
+  backgroundImage: `
+    linear-gradient(rgba(40, 40, 40, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 40, 40, 0.3) 1px, transparent 1px)
+  `,
+  backgroundSize: '20px 20px'
+} as const;
 
 interface DashboardProps {
   currentView: ViewMode;
@@ -22,25 +31,30 @@ const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
 
-  const filteredAgents = agents.filter(agent => 
-    agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    agent.role.toLowerCase().includes(searchQuery.toLowerCase())
+  // Memoized to prevent recalculation on unrelated state changes
+  const filteredAgents = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return agents.filter(agent =>
+      agent.name.toLowerCase().includes(query) ||
+      agent.role.toLowerCase().includes(query)
+    );
+  }, [agents, searchQuery]);
+
+  // Memoized running agent count
+  const runningAgentCount = useMemo(() =>
+    agents.filter(a => a.status === 'RUNNING').length,
+    [agents]
   );
 
   return (
     <div className="flex h-screen overflow-hidden bg-gb-bg-h text-gb-fg font-mono">
       {/* Background Grid Pattern */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 opacity-20" 
-        style={{
-            backgroundImage: `
-                linear-gradient(rgba(40, 40, 40, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(40, 40, 40, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '20px 20px'
-        }}
-      ></div>
+      <div
+        className="fixed inset-0 pointer-events-none z-0 opacity-20"
+        style={GRID_BACKGROUND_STYLE}
+      />
 
       <Sidebar 
         currentView={currentView} 
@@ -90,9 +104,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, 
             >
               <span className="material-symbols-outlined">notifications_active</span>
             </div>
-            <div className="w-12 h-12 border-3 border-gb-bg0 bg-gb-bg0 pixel-art overflow-hidden">
-              <img className="w-full h-full object-cover grayscale contrast-150 hover:grayscale-0 transition-all duration-500" src={PROFILE_IMAGE} alt="Profile" />
-            </div>
+            <button
+              onClick={() => setShowProfileSettings(true)}
+              className="w-12 h-12 border-3 border-gb-bg0 bg-gb-bg0 pixel-art overflow-hidden cursor-pointer hover:border-gb-aqua transition-all"
+            >
+              <img loading="lazy" className="w-full h-full object-cover grayscale contrast-150 hover:grayscale-0 transition-all duration-500" src={PROFILE_IMAGE} alt="Profile" />
+            </button>
           </div>
         </header>
 
@@ -106,12 +123,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, 
             subValue="+12.4% EFFICIENCY INCREASE"
             subValueColor="text-gb-green"
           />
-          <StatCard 
-            title="Active Tasks" 
-            icon="rebase_edit" 
-            value={`${agents.filter(a => a.status === 'RUNNING').length}/${agents.length}`} 
-            progress={66} 
-            color="yellow" 
+          <StatCard
+            title="Active Tasks"
+            icon="rebase_edit"
+            value={`${runningAgentCount}/${agents.length}`}
+            progress={66}
+            color="yellow"
             subValue="PROCESSING QUEUE: OPTIMAL"
             subValueColor="text-gb-aqua"
           />
@@ -137,10 +154,10 @@ const Dashboard: React.FC<DashboardProps> = ({ currentView, onViewChange, logs, 
               <div className="absolute inset-0 bg-gradient-to-r from-gb-aqua to-transparent w-1/3"></div>
             </div>
             <button 
-              onClick={() => alert('Global Map View requires WebGL2 capable viewport.')}
+              onClick={() => onViewChange('orchestrator')}
               className="text-[10px] font-bold uppercase border-2 border-gb-gray px-4 py-2 hover:bg-gb-fg hover:text-gb-bg-h transition-colors"
             >
-              Global View
+              ORCHESTRATE
             </button>
           </div>
           {filteredAgents.length === 0 ? (

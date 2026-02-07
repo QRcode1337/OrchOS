@@ -9,13 +9,27 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onViewDocs, onViewTerminal }) => {
   const [isLightMode, setIsLightMode] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState<'logic' | 'memory' | 'features' | null>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText('npm install orchestra-os');
-    // We could add a toast here, but for now specific feedback isn't implemented in the design
-    // maybe just console log to verify it worked
     console.log('Copied to clipboard');
     alert('Command copied to clipboard!');
+  };
+
+  const infoModals = {
+    logic: {
+      title: 'LOGIC MODULE',
+      content: 'Chain-of-thought processing engine. Deterministic execution paths for critical agentic workflows with structured reasoning and decision trees.'
+    },
+    memory: {
+      title: 'MEMORY CORE',
+      content: 'Vector database integration with infinite context window. Persistent storage and retrieval for long-term agent knowledge and state management.'
+    },
+    features: {
+      title: 'FEATURES',
+      content: 'Comprehensive agent orchestration system including real-time monitoring, multi-agent coordination, snapshot management, and neural synthesis capabilities.'
+    }
   };
 
   return (
@@ -51,8 +65,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onViewDocs, onViewT
               </div>
               <div className="hidden md:flex items-center gap-8 text-sm font-bold tracking-wide">
                 <button onClick={onViewDocs} className="hover:text-li-primary transition-colors">DOCS</button>
-                <button onClick={() => alert('Logic Module initialized. Access via Dashboard.')} className="hover:text-li-primary transition-colors">LOGIC</button>
-                <button onClick={() => alert('Memory Core active. Access via Dashboard.')} className="hover:text-li-primary transition-colors">MEMORY</button>
+                <button onClick={() => setShowInfoModal('logic')} className="hover:text-li-primary transition-colors">LOGIC</button>
+                <button onClick={() => setShowInfoModal('memory')} className="hover:text-li-primary transition-colors">MEMORY</button>
               </div>
               <div className="flex items-center">
                 <button className="bg-li-ink-dark text-li-bg-light px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-li-primary hover:text-li-ink-dark transition-colors">
@@ -225,7 +239,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onViewDocs, onViewT
                    <span className="font-bold text-lg tracking-tighter uppercase text-white">Orchestra<span className="text-lp-primary">OS</span></span>
                 </div>
                 <nav className="hidden md:flex items-center gap-10">
-                   <button onClick={() => alert('Features module loading...')} className="text-sm font-medium text-gray-400 hover:text-lp-primary transition-colors relative group">// FEATURES</button>
+                   <button onClick={() => setShowInfoModal('features')} className="text-sm font-medium text-gray-400 hover:text-lp-primary transition-colors relative group">// FEATURES</button>
                    <button onClick={onViewDocs} className="text-sm font-medium text-gray-400 hover:text-lp-primary transition-colors relative group">// DOCS</button>
                    <button onClick={onViewTerminal} className="text-sm font-medium text-gray-400 hover:text-lp-primary transition-colors relative group">// TERMINAL</button>
                 </nav>
@@ -367,6 +381,72 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onViewDocs, onViewT
                    </div>
                </div>
            </section>
+        </div>
+      )}
+
+      {/* Info Modal */}
+      {showInfoModal && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 font-sans"
+          onClick={() => setShowInfoModal(null)}
+        >
+          <div
+            className={`max-w-2xl w-full p-8 ${
+              isLightMode
+                ? 'bg-li-bg-light border-4 border-li-ink-dark'
+                : 'bg-lp-bg-dark border-4 border-lp-primary'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2
+                className={`text-3xl font-display font-bold uppercase tracking-tight ${
+                  isLightMode ? 'text-li-ink-dark' : 'text-white'
+                }`}
+              >
+                {infoModals[showInfoModal].title}
+              </h2>
+              <button
+                onClick={() => setShowInfoModal(null)}
+                className={`w-10 h-10 flex items-center justify-center transition-colors ${
+                  isLightMode
+                    ? 'text-li-ink-dark hover:bg-li-ink-dark hover:text-li-bg-light'
+                    : 'text-lp-primary hover:bg-lp-primary hover:text-lp-bg-dark'
+                }`}
+              >
+                <span className="material-symbols-outlined text-2xl">close</span>
+              </button>
+            </div>
+            <p
+              className={`text-lg leading-relaxed mb-8 ${
+                isLightMode ? 'text-li-ink-dark/80' : 'text-gray-300'
+              }`}
+            >
+              {infoModals[showInfoModal].content}
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={onLaunch}
+                className={`flex-1 py-3 font-bold uppercase tracking-wider transition-colors ${
+                  isLightMode
+                    ? 'bg-li-ink-dark text-li-bg-light hover:bg-li-primary border-2 border-li-ink-dark'
+                    : 'bg-lp-primary text-lp-bg-dark hover:bg-white'
+                }`}
+              >
+                Launch Dashboard
+              </button>
+              <button
+                onClick={() => setShowInfoModal(null)}
+                className={`flex-1 py-3 font-bold uppercase tracking-wider transition-colors ${
+                  isLightMode
+                    ? 'border-2 border-li-ink-dark text-li-ink-dark hover:bg-li-ink-dark hover:text-li-bg-light'
+                    : 'border-2 border-lp-primary text-lp-primary hover:bg-lp-primary hover:text-lp-bg-dark'
+                }`}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

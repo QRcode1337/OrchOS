@@ -28,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onDeploy }
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-gb-gray/20 pb-4 mt-2">
             <h1 className="text-xl font-display font-bold italic text-gb-green tracking-tighter">CORTEX_DEV</h1>
-            <div className="bg-gb-bg-h px-2 py-1 text-[10px] font-mono text-gb-gray border border-gb-gray/30">QTY: 03</div>
+            <div className="bg-gb-bg-h px-2 py-1 text-[10px] font-mono text-gb-gray border border-gb-gray/30">QTY: 05</div>
         </div>
 
         <nav className="flex flex-col gap-4">
@@ -59,18 +59,18 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onDeploy }
 
           {/* Item 2: CORTEX-ANALYZER */}
           <button 
-            onClick={() => onViewChange('docs')}
-            className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'docs' ? 'border-gb-yellow bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
+            onClick={() => onViewChange('synthesis')}
+            className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'synthesis' ? 'border-gb-yellow bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
           >
              <div className="flex gap-3 items-center p-2">
-                 <div className={`w-12 h-12 flex items-center justify-center border-2 ${currentView === 'docs' ? 'bg-gb-fg border-gb-fg' : 'bg-gb-bg-h border-gb-gray'} transition-colors`}>
-                     <span className={`material-symbols-outlined ${currentView === 'docs' ? 'text-gb-bg0' : 'text-gb-gray'} text-2xl`}>grid_goldenratio</span>
+                 <div className={`w-12 h-12 flex items-center justify-center border-2 ${currentView === 'synthesis' ? 'bg-gb-fg border-gb-fg' : 'bg-gb-bg-h border-gb-gray'} transition-colors`}>
+                     <span className={`material-symbols-outlined ${currentView === 'synthesis' ? 'text-gb-bg0' : 'text-gb-gray'} text-2xl`}>grid_goldenratio</span>
                  </div>
                  <div className="flex-1 min-w-0">
-                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'docs' ? 'text-gb-fg' : 'text-gb-gray'}`}>CORTEX-ANALYZER</div>
+                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'synthesis' ? 'text-gb-fg' : 'text-gb-gray'}`}>CORTEX-ANALYZER</div>
                      <div className="flex gap-0.5 h-3 w-full mb-1 opacity-80">
-                         <div className={`flex-1 ${currentView === 'docs' ? 'bg-gb-yellow' : 'bg-gb-gray/30'}`}></div>
-                         <div className={`flex-1 ${currentView === 'docs' ? 'bg-gb-yellow' : 'bg-gb-gray/30'}`}></div>
+                         <div className={`flex-1 ${currentView === 'synthesis' ? 'bg-gb-yellow' : 'bg-gb-gray/30'}`}></div>
+                         <div className={`flex-1 ${currentView === 'synthesis' ? 'bg-gb-yellow' : 'bg-gb-gray/30'}`}></div>
                          <div className="flex-1 bg-gb-gray/30"></div>
                          <div className="flex-1 bg-gb-gray/30"></div>
                      </div>
@@ -79,8 +79,52 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onDeploy }
              </div>
           </button>
 
-          {/* Item 3: LOGIC-GATE (CLI) */}
-           <button 
+          {/* Item 2.5: SYSTEM_DOCS */}
+          <button 
+            onClick={() => onViewChange('docs')}
+            className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'docs' ? 'border-gb-purple bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
+          >
+             <div className="flex gap-3 items-center p-2">
+                 <div className={`w-12 h-12 flex items-center justify-center border-2 ${currentView === 'docs' ? 'bg-gb-fg border-gb-fg' : 'bg-gb-bg-h border-gb-gray'} transition-colors`}>
+                     <span className={`material-symbols-outlined ${currentView === 'docs' ? 'text-gb-bg0' : 'text-gb-gray'} text-2xl`}>menu_book</span>
+                 </div>
+                 <div className="flex-1 min-w-0">
+                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'docs' ? 'text-gb-fg' : 'text-gb-gray'}`}>SYSTEM_MANUAL</div>
+                     <div className="flex gap-0.5 h-3 w-full mb-1 opacity-80">
+                         <div className={`flex-1 ${currentView === 'docs' ? 'bg-gb-purple' : 'bg-gb-gray/30'}`}></div>
+                         <div className="flex-1 bg-gb-gray/30"></div>
+                         <div className="flex-1 bg-gb-gray/30"></div>
+                         <div className="flex-1 bg-gb-gray/30"></div>
+                     </div>
+                     <div className="text-[9px] font-mono text-gb-gray uppercase tracking-widest">STATUS: READ_ONLY</div>
+                 </div>
+             </div>
+          </button>
+
+          {/* Item 3: CORTEX_DEV */}
+          <button 
+            onClick={() => onViewChange('cortex')}
+            className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'cortex' ? 'border-gb-blue bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
+          >
+             <div className="flex gap-3 items-center p-2">
+                 <div className={`w-12 h-12 flex items-center justify-center border-2 ${currentView === 'cortex' ? 'bg-gb-fg border-gb-fg' : 'bg-gb-bg-h border-gb-gray'} transition-colors`}>
+                     <span className={`material-symbols-outlined ${currentView === 'cortex' ? 'text-gb-bg0' : 'text-gb-gray'} text-2xl`}>dvr</span>
+                 </div>
+                 <div className="flex-1 min-w-0">
+                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'cortex' ? 'text-gb-fg' : 'text-gb-gray'}`}>CORTEX_DEV</div>
+                     <div className="flex gap-0.5 h-3 w-full mb-1 opacity-80">
+                         <div className={`flex-1 ${currentView === 'cortex' ? 'bg-gb-blue' : 'bg-gb-gray/30'}`}></div>
+                         <div className={`flex-1 ${currentView === 'cortex' ? 'bg-gb-blue' : 'bg-gb-gray/30'}`}></div>
+                         <div className={`flex-1 ${currentView === 'cortex' ? 'bg-gb-blue' : 'bg-gb-gray/30'}`}></div>
+                         <div className="flex-1 bg-gb-gray/30"></div>
+                     </div>
+                     <div className="text-[9px] font-mono text-gb-gray uppercase tracking-widest">STATUS: ONLINE</div>
+                 </div>
+             </div>
+          </button>
+
+          {/* Item 4: LOGIC-GATE (CLI) */}
+           <button
             onClick={() => onViewChange('cli')}
             className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'cli' ? 'border-gb-red bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
           >
@@ -97,6 +141,28 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, onDeploy }
                          <div className="flex-1 bg-gb-red"></div>
                      </div>
                      <div className="text-[9px] font-mono text-gb-red uppercase tracking-widest animate-pulse">STATUS: CRITICAL_ERR</div>
+                 </div>
+             </div>
+          </button>
+
+          {/* Item 5: SNAPSHOTS */}
+          <button
+            onClick={() => onViewChange('snapshots')}
+            className={`group relative w-full border-2 transition-all p-1 text-left ${currentView === 'snapshots' ? 'border-gb-aqua bg-gb-bg-h' : 'border-gb-gray/30 bg-gb-bg0 hover:border-gb-gray'}`}
+          >
+             <div className="flex gap-3 items-center p-2">
+                 <div className={`w-12 h-12 flex items-center justify-center border-2 ${currentView === 'snapshots' ? 'bg-gb-fg border-gb-fg' : 'bg-gb-bg-h border-gb-gray'} transition-colors`}>
+                     <span className={`material-symbols-outlined ${currentView === 'snapshots' ? 'text-gb-bg0' : 'text-gb-gray'} text-2xl`}>photo_camera</span>
+                 </div>
+                 <div className="flex-1 min-w-0">
+                     <div className={`font-display font-bold uppercase text-lg leading-none mb-1 ${currentView === 'snapshots' ? 'text-gb-fg' : 'text-gb-gray'}`}>SNAPSHOTS</div>
+                     <div className="flex gap-0.5 h-3 w-full mb-1 opacity-80">
+                         <div className={`flex-1 ${currentView === 'snapshots' ? 'bg-gb-aqua' : 'bg-gb-gray/30'}`}></div>
+                         <div className={`flex-1 ${currentView === 'snapshots' ? 'bg-gb-aqua' : 'bg-gb-gray/30'}`}></div>
+                         <div className={`flex-1 ${currentView === 'snapshots' ? 'bg-gb-aqua/50' : 'bg-gb-gray/30'}`}></div>
+                         <div className="flex-1 bg-gb-gray/30"></div>
+                     </div>
+                     <div className="text-[9px] font-mono text-gb-gray uppercase tracking-widest">STATUS: ARCHIVING</div>
                  </div>
              </div>
           </button>

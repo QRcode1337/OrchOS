@@ -12,9 +12,19 @@
 Orchestra OS is a high-fidelity dashboard console designed for managing, monitoring, and orchestrating autonomous AI agents. Built with a "retro-futuristic" blueprint aesthetic, it combines raw data visualization with module-based control cards.
 
 **Key Modules:**
-*   **SQUAD_UNITS (Dashboard)**: Real-time agent status grid, throughput monitoring, and rapid deployment tools.
-*   **CORTEX-ANALYZER (Documentation)**: System specs, API references, and architectural blueprints.
-*   **LOGIC-GATE (CLI)**: Direct terminal access for raw log streams and system overrides.
+* **SQUAD_UNITS (Dashboard)**: Real-time agent status grid, throughput monitoring, and rapid deployment tools.
+* **CORTEX-ANALYZER (Synthesis)**: High-fidelity neural map visualization for knowledge convergence and artifact analysis.
+* **LOGIC-GATE (CLI)**: Direct terminal access for raw log streams and system overrides.
+* **BLUEPRINT_DECK (Docs)**: System specs, API references, and architectural blueprints.
+
+## // QUICK_START
+
+Execute this sequence to hydrate and launch the system immediately:
+
+```bash
+# Install dependencies, initialize database, and launch
+pnpm setup && pnpm dev
+```
 
 ## // TECH_STACK
 
@@ -46,7 +56,7 @@ pnpm install
 Initialize the SQLite database with Prisma:
 
 ```bash
-npx prisma migrate dev
+pnpm prisma migrate dev
 ```
 
 ### 04. System Launch
@@ -57,6 +67,9 @@ pnpm dev
 ```
 
 Access the console via `http://localhost:3000`
+
+> [!NOTE]
+> The dashboard uses **HMR (Hot Module Replacement)**. If visual artifacts persist after a code update, perform a hard refresh (`Cmd + Shift + R` or `Ctrl + F5`).
 
 ### Available Scripts
 
@@ -143,5 +156,5 @@ The build is optimized for production:
 
 <div align="center">
   <p><em>"Harmonizing Syntax and Silicon"</em></p>
-  <p>© 2024 Orchestra Operations</p>
+  <p>© 2026 Orchestra Operations</p>
 </div>
